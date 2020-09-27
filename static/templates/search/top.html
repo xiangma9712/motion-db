@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="Motion,Debate,Search">
+{% endblock %}
+
+{% block body %}
+  <div class="text-center">
+      <p class="h4">Search</p>
+  </div>
+
+  <form name="form1" class="px-3 mx-3" onsubmit="return false;">
+		<fieldset class="form-group">
+	 	<div class="row">
+		 <legend class="col-form-label col-sm-2">Style</legend>
+		 <div class="col-sm-10">
+			<div class="custom-control custom-radio custom-control-inline">
+        <input class="custom-control-input" type="radio" name="s1" id="select1" value="null" checked="" onChange="getOption()">
+        <label class="custom-control-label" for="select1">All</label>
+			</div>
+			<div class="custom-control custom-radio custom-control-inline">
+        <input class="custom-control-input" type="radio" name="s1" id="select2" value=0 onChange="getOption()">
+        <label class="custom-control-label" for="select2">BP</label>
+			</div>
+			<div class="custom-control custom-radio custom-control-inline">
+				<input class="custom-control-input" type="radio" name="s1" id="select4" value=1 onChange="getOption()">
+        <label class="custom-control-label" for="select4">Asian</label>
+			</div>
+			<div class="custom-control custom-radio custom-control-inline">
+        <input class="custom-control-input" type="radio" name="s1" id="select3" value=2 onChange="getOption()">
+        <label class="custom-control-label" for="select3">NA</label>
+			</div>
+		 </div>
+		</div>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<div class="row">
+		 	 	<legend class="col-form-label col-sm-2">Level</legend>
+		 		<div class="col-sm-10">
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s2" id="select5" value="null" checked="" onChange="getOption()">
+	        <label class="custom-control-label" for="select5">All</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s2" id="select6" value=0 onChange="getOption()">
+	        <label class="custom-control-label" for="select6">rookie</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s2" id="select7" value=1 onChange="getOption()">
+	        <label class="custom-control-label" for="select7">domestic</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s2" id="select8" value=2 onChange="getOption()">
+	        <label class="custom-control-label" for="select8">international</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s2" id="select9" value=3 onChange="getOption()">
+	        <label class="custom-control-label" for="select9">Pro-Am</label>
+				</div>
+				</div>
+			 </div>
+			</fieldset>
+
+		<div class="form-group row">
+			<label for="TN" class="col-sm-2 col-form-label">Tournament Name</label>
+				<div class="col-sm-10">
+        <select name="tour_name" id="TN" class="form-control">
+        <option value="null">select style or level first</option>
+        </select>
+				</div>
+    </div>
+
+		<div class="form-group row">
+			<label id="year_label" class="col-sm-2 col-form-label">Year Range : from 2000 to {{year}}</label>
+				<div class="col-sm-10">
+							<input type="range" class="custom-range" min="2000" max="{{year}}" value="2000" step="1" id="year1" name="year" onchange="label()">
+							<input type="range" class="custom-range" min="2000" max="{{year}}" value="{{year}}" step="1" id="year2" name="year" onchange="label()">
+	      </div>
+		</div>
+
+		<div class="form-group row">
+			<label for="theme" class="col-sm-2 col-form-label">Theme</label>
+				<div class ="col-sm-10">
+				<select id="theme" class="form-control" name="theme">
+					<option value="null"> </option>
+					{% for theme in theme_list %}
+					<option value='{{theme.id}}'>{{theme.theme_str}}</option>
+					{% endfor %}
+　　		</select>
+				</div>
+		</div>
+
+		<fieldset class="form-group">
+			<div class="row">
+		 	 	<legend class="col-form-label col-sm-2">Round</legend>
+		 		<div class="col-sm-10">
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s4" id="select10" value="null" checked="">
+	        <label class="custom-control-label" for="select10">All</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s4" id="select11" value=1>
+	        <label class="custom-control-label" for="select11">Preliminary</label>
+				</div>
+				<div class="custom-control custom-radio custom-control-inline">
+	        <input class="custom-control-input" type="radio" name="s4" id="select12" value=0>
+	        <label class="custom-control-label" for="select12">Break Round</label>
+				</div>
+				</div>
+			 </div>
+			</fieldset>
+
+			<div class="form-group row">
+			 <label for="KWD" class="col-sm-2 col-form-label">Keyword</label>
+			 <div class="col-sm-10">
+		 	 	<input type="text" class="form-control" id="KWD" value="">
+	 		 </div>
+ 			</div>
+			
+			<div class="container d-flex justify-content-around">
+					<button type="button" class="btn btn-dark btn-lg" onClick="search()">Search</button>
+			</div>
+    </form>
+
+		<section class="d-none">
+	        <div id=tournament>
+	            [
+	            {{tournament_json}}
+	            ]
+	        </div>
+	    </section>
+ {% endblock %}
+
+{% block script %}
+//<script>
+	function getOption(){
+			var style = document.forms.form1.s1.value;
+			var level = document.forms.form1.s2.value;
+			var tour_options = document.forms.form1.tour_name;
+			tour_options.options.length = 0;
+			var tournament = JSON.parse(document.getElementById("tournament").innerHTML);
+			if(style != "null"){
+				tournament = tournament.filter(t => t[1]==style);
+			}
+			if(level != "null"){
+				tournament = tournament.filter(t => t[2]==level);
+			}
+			var candidates = tournament.map(t => t[0]);
+
+			tour_options.options[0] = null;
+			for(var i=0; i<candidates.length; i++){
+					tour_options.options[i+1] = new Option(candidates[i]);
+			}
+	}
+
+	function label(){
+	    var yearfrom = document.forms.form1.year1.value;
+			var yearto = document.forms.form1.year2.value;
+	    var text = "Year Range : from " + yearfrom + " to " + yearto;
+	    document.getElementById("year_label").innerHTML = text;
+	}
+</script>
+<script>
+function search(){
+		var url = "result/?";
+		var query = "";
+
+		const map = new Map();
+		var st = document.forms.form1.s1.value;
+		map.set("st",st);
+		var tn = document.getElementById("TN").value;
+		map.set("tn",tn);
+		var tl = document.forms.form1.s2.value;
+		map.set("tl",tl);
+		var ti = document.getElementById("theme").value;
+		map.set("ti",ti);
+		var ip = document.forms.form1.s4.value;
+		map.set("ip",ip);
+		var kw = document.forms.form1.KWD.value;
+		map.set("kw",kw);
+		var yf = document.forms.form1.year1.value;
+		map.set("yf",yf);
+		var yt = document.forms.form1.year2.value;
+		map.set("yt",yt)
+
+		map.forEach((value,key) => {
+			if((value != "null")&&(value != "")){
+				query += "&" + key + "=" + value;
+			}
+		});
+
+		url += query.slice(1);
+
+		location.href = url;
+	}
+</script>
+{% endblock%}
+
+{% block style %}
+{% endblock %}

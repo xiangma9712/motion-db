@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Motion DB{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="Motion,Debate,DB">
+{% endblock %}
+{% block add %}
+    <link href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+{% endblock %}
+{% block body %}
+<div class="text-center">
+     <p class="h4 text-info">Welcome</p>
+     <span class="text-muted">Thank you for using this service.</span>
+</div>
+{% if msg %}
+<div class="shadow p-3 m-3 bg-white rounded">
+  <p class="font-weight-bolder">Check it out!</p>
+  <ul class="list-group list-group-flush">
+  {% for me in msg %}
+  <li class="list-group-item">
+    <a href="/message/?id={{me.id}}">{{me.title}}</a>
+  </li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+<p class="p-3">
+  This site has {{ count }} motions from various tournaments and wide year range.
+  You can check a detailed motion coverage of this DB from the tables below
+</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 my-2">
+      <div class="text-center">
+        <span class="font-weight-bolder">Tournament Table</span>
+      </div>
+      <table 
+        id="table1"
+        data-sortable="true"
+        data-search="true"
+        data-pagination="true"
+      >
+        <thead class="thead-dark">
+          <tr>
+            <th data-field="name" data-sortable="false" data-width="50" data-width-unit="%" class="px-1">Tournament</th>
+            <th data-field="min" data-sortable="true" data-width="20" data-width-unit="%" class="px-1">Since</th>
+            <th data-field="max" data-sortable="true" data-width="20" data-width-unit="%" class="px-1">Latest</th>
+            <th data-field="num" data-sortable="true" data-width="10" data-width-unit="%" class="px-1">Num</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div class="col-md-6 my-2">
+      <div class="text-center">
+        <span class="font-weight-bolder">Theme Table</span>
+      </div>
+      <table 
+        id="table2"
+        data-sortable="true"
+        data-search="true"
+        data-pagination="true"
+      >
+        <thead class="thead-dark">
+          <tr>
+            <th data-field="str" data-sortable="false" data-width="65" data-width-unit="%" class="px-1">Theme</th>
+            <th data-field="num" data-sortable="true" data-width="35" data-width-unit="%" class="px-1">Num</th>
+          </tr>
+        </thead>
+      </table>
+    </div>    
+  </div>
+</div>
+{% endblock %}
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}
+{% block script %}
+//<script type="text/javascript">
+  $(function() {
+    var $table1 = $('#table1')
+    var $table2 = $('#table2')
+    var data1 = [
+      {% for each in data %}
+      {
+        'name': '<a href="/tournaments/?id={{ each.id }}">{{ each.name }}</a>',
+        'min' : '{{ each.min }}',
+        'max' : '{{ each.max }}',
+        'num': '{{ each.num }}',
+      },
+      {% endfor %}
+    ]
+    var data2 = [
+      {% for theme in dict %}
+      {
+        'str': '<a href="{{ theme.url }}">{{ theme.str }}</a>',
+        'num': '{{ theme.num }}',
+      },
+      {% endfor %}
+    ]
+    $table1.bootstrapTable({data: data1})
+    $table2.bootstrapTable({data: data2})
+  })
+</script>
+
+{% endblock %}
+{% block style %}
+.bootstrap-table .fixed-table-container .table thead th .sortable{
+  padding-right : 17px;
+  padding-left : 0px;
+}
+{% endblock %}

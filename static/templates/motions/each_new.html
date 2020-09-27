@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% block title %}Motion Page{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="{{motion.tournament}},{{motion.year}},{{motion.round}">
+{% endblock %}
+
+{% block add %}  
+    <link href="{% static 'to/c3.min.css' %}" rel="stylesheet">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="{% static 'to/c3.min.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+  <div class="text-center">
+      <p class="h4">Motion Page</p>
+  </div>
+  {% ifequal msg_id '1' %}
+  <div class="alert alert-success p-3 m-3" role="alert">Thank you for update!</div>
+  {% endifequal %}
+  {% ifequal msg_id '2' %}
+  <div class="alert alert-danger p-3 m-3" role="alert">Motion text was invalid :(</div>
+  {% endifequal %}
+  {% ifequal msg_id '3' %}
+  <div class="alert alert-warning p-3 m-3" role="alert">Motion DB has a data for that round...</div>
+  {% endifequal %}
+  
+  {% if not user.is_authenticated %}
+  <div class="alert alert-warning p-3 m-3" role="alert">To edit motion/info text or to evaluate fairness, you've got to <a href="/accounts/login/?next={{ request.get_full_path }}">log in</a></div>
+  {% endif %}
+  
+  <div class="shadow p-3 m-3 bg-white rounded">
+      <p class="font-weight-bolder">Meta</p>
+      <p>
+          Tournament : {{motion.tournament}}<br>
+          Year : {{motion.year}}<br>
+          Round : {{motion.round}}<br>
+          *These entries are not changeable
+      </p>
+  </div>
+
+  <div class="shadow p-3 m-3 bg-white rounded">
+      <label for="static-motion" class="font-weight-bolder">Motion</label>
+      <p class="px-2" id="static-motion">{{motion.motion_text}}</p>
+      <div class="row justify-content-center">
+          {% if user.is_authenticated %}
+          <button 
+            type="button" 
+            class="btn btn-outline-info btn-sm" 
+            data-toggle="modal" 
+            data-target="#motion-text">
+            Edit motion text
+          </button>
+          <div class="modal fade" id="motion-text" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Motion Text</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <form name="motion{{motion.id}}" class="p-1 m-1" action="" method="POST">
+                          {% csrf_token %}
+                          <input type="hidden" name="id" value="{{ motion.id }}">
+                          <input type="hidden" name="which" value="motion">
+                          <div class="form-group">
+                              <textarea class="form-control" name="motion" id="motion{{motion.id}}" rows="4" onChange=errorCheck(value,{{motion.id}})>{{motion.motion_text}}</textarea>
+                          </div>
+                          <div class="container d-flex justify-content-around">
+                              <input type="submit" class="btn btn-dark" value="save"/>
+                          </div>
+                      </form>
+                  </div>
+                  <div class="modal-footer justify-content-center">
+                      <div id="MotionAlert{{motion.id}}"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+      </div>
+      <br>
+      <label for="static-info" class="font-weight-bolder">Info</label>
+      <p class="px-2" id="static-info">{{motion.info_text}}</p>
+      <div class="row justify-content-center">
+          {% if user.is_authenticated %}
+          <button 
+            type="button" 
+            class="btn btn-outline-info btn-sm" 
+            data-toggle="modal" 
+            data-target="#info-text">
+            Edit info text
+          </button>
+          <div class="modal fade" id="info-text" tabindex="-1" role="dialog" aria-labelledby="modalTitle-info" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle-info">Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <form name="motion{{motion.id}}" class="p-1 m-1" action="" method="POST">
+                          {% csrf_token %}
+                          <input type="hidden" name="id" value="{{ motion.id }}">
+                          <input type="hidden" name="which" value="info">
+                          <div class="form-group">
+                              <textarea class="form-control" name="info" id="info{{motion.id}}" rows="4">{{motion.info_text}}</textarea>
+                          </div>
+                          <div class="container d-flex justify-content-around">
+                              <input type="submit" class="btn btn-dark" value="save"/>
+                          </div>
+                      </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+      </div>
+      <br>
+      <form name="motion{{motion.id}}" class="p-1 m-1" action="" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="id" value="{{ motion.id }}">
+          <input type="hidden" name="which" value="theme">
+          <div class="form-group row">
+              <label for="ptheme" class="col-sm-2 col-form-label font-weight-bolder">Primary Theme</label>
+                  <div class ="col-sm-10">
+                  <select id="ptheme" name="p-theme" class="form-control" onchange="unSaved({{motion.id}},'ThemeAlert')">
+                      <option value="null"> </option>
+                      {% for theme in theme_list %}
+                      <option value='{{theme.id}}'{% if theme.theme_str == motion.theme_top %}
+                      selected = ""
+                      {% endif %}>{{theme.theme_str}}</option>
+                      {% endfor %}
+  　　		     </select>
+                  </div>
+          </div>
+          <div class="form-group row">
+              <label for="stheme" class="col-sm-2 col-form-label font-weight-bolder">Secondary Theme</label>
+                  <div class ="col-sm-10">
+                  <select id="stheme" name="s-theme" class="form-control" onchange="unSaved({{motion.id}},'ThemeAlert')">
+                      <option value="null"> </option>
+                      {% for theme in theme_list %}
+                      <option value='{{theme.id}}'{% if theme.theme_str == motion.theme_add %}
+                      selected = ""
+                      {% endif %}>{{theme.theme_str}}</option>
+                      {% endfor %}
+  　　		     </select>
+                  </div>
+          </div>
+          <div class="container d-flex justify-content-around">
+          <input type="submit" class="btn btn-dark" value="save theme"/>
+          </div>
+      </form>
+      <div id="ThemeAlert{{motion.id}}"></div>
+      
+      <p class="font-weight-bolder">Fairness Evaluation</p>
+      {% ifequal motion.fairness 2 %}
+      <span class="px-2">No evaluation has been made yet.</span>
+      {% else %}
+      <div id="chart"></div>
+      {% endifequal %}
+      {% if user.is_authenticated %}
+      <form method="POST" action="">
+           {% csrf_token %}
+           <input type="hidden" name="id" value={{motion.id}}>
+           <input type="hidden" name="which" value="eval">
+           <fieldset class="form-group">
+             <div class="row justify-content-around">
+                 <div class="col-sm-6 col-md-4 p-3">
+                     <div class="custom-control custom-radio">
+                         <input class="custom-control-input" type="radio" name="eval" id="select1" value=1 
+                         {% if score == 1 %}
+                         checked="checked" 
+                         {% endif %}
+                         required>
+                         <label class="custom-control-label" for="select1">Easy for Gov</label>
+                     </div>
+                     <div class="custom-control custom-radio">
+                         <input class="custom-control-input" type="radio" name="eval" id="select2" value=0.5 
+                         {% if score == 0.5 %}
+                         checked="checked" 
+                         {% endif %}
+                         required>
+                         <label class="custom-control-label" for="select2">Leaning toward Gov</label>
+                     </div>
+                     <div class="custom-control custom-radio">
+                         <input class="custom-control-input" type="radio" name="eval" id="select3" value=0 
+                         {% if score == 0 %}
+                         checked="checked" 
+                         {% endif %}
+                         required>
+                         <label class="custom-control-label" for="select3">Fair</label>
+                     </div>
+                     <div class="custom-control custom-radio">
+                         <input class="custom-control-input" type="radio" name="eval" id="select4" value=-0.5 
+                         {% if score == -0.5 %}
+                         checked="checked" 
+                         {% endif %}
+                         required>
+                         <label class="custom-control-label" for="select4">Leaning toward Opp</label>
+                     </div>
+                     <div class="custom-control custom-radio">
+                         <input class="custom-control-input" type="radio" name="eval" id="select5" value=-1 
+                         {% if score == -1 %}
+                         checked="checked" 
+                         {% endif %}
+                         required>
+                         <label class="custom-control-label" for="select5">Easy for Opp</label>
+                     </div>
+                 </div>
+             </div>
+         </fieldset>
+         <div class="row justify-content-center">
+             <button type ="submit" class="btn btn-dark">Evaluate</button>
+         </div>
+     </form>
+      {% endif %}
+  </div>
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}
+
+{% block script %}
+//<script>
+{% if motion.fairness <= 1 %}
+var chart{{motion.id}} = c3.generate({
+    data: {
+      columns: [
+        ['Easy for Gov', {{ motion.easy_gov }}.length],
+        ['Leaning toward Gov', {{ motion.leaning_gov }}.length],
+        ['Fair',{{ motion.fair }}.length],
+        ['Leanin toward Opp',{{ motion.leaning_opp }}.length],
+        ['Easy for Opp',{{ motion.easy_opp }}.length],
+    ],
+      type: "donut",
+      order: null
+  }
+});
+{% endif %}
+</script>
+<script>
+function errorCheck(value,id){
+    char = value.length;
+    words = value.split(' ').length;
+    if((words <= 2)||(char < 12)){
+        var text = '<div class="alert alert-danger" role="alert">motion is too short; you cannot save.</div>';
+        document.getElementById("MotionAlert"+id).innerHTML = text;
+    }
+    else if((value.indexOf("TH") == -1)&&(value.indexOf("his house") == -1)){
+        var text = '<div class="alert alert-warning" role="alert">motion should include a phrase "TH / This house"</div>';
+        document.getElementById("MotionAlert"+id).innerHTML = text;
+    }
+    else{
+        unSaved(id,"MotionAlert")
+    }
+}
+</script>
+<script>
+function unSaved(id,place){
+    var text = '<div class="alert alert-primary" role="alert">The change hasn\'t been saved yet</div>';
+    document.getElementById(place+id).innerHTML = text;
+}
+ //</script>
+{% endblock%}

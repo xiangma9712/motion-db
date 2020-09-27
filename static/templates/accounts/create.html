@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="MotionDB,Sign,Up">
+{% endblock %}
+
+{% block body %}
+<div class="text-center">
+     <p class="h4">Sign Up</p>
+</div>
+<div class="shadow p-3 m-3 bg-white rounded">
+  <div class="container">
+    <form method="POST" action="">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="row  justify-content-center">
+            <button type ="submit" class="btn btn-dark">Submit</button>
+          </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}

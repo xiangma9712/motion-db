@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="MotionDB,Contact">
+{% endblock %}
+
+{% block body %}
+<div class="text-center">
+     <p class="h4">Contact</p>
+</div>
+<div class="shadow p-3 m-3 bg-white rounded">
+  <p class="font-weight-bolder">Feedback</p>
+  <p>We appreciate if you give us feedback. It would be really helpful to improve this site.</p>
+  <div class="text-center">
+    <a href="https://forms.gle/cDNMYRc8TKzNfRjC6">Form link</a>
+  </div>
+  <p class="font-weight-bolder">Join us</p>
+  <p>
+    We are looking for someone who keep this site up-to-date and functioning as a administrator. 
+    If you're interested, please contact us by the form below    
+  </p>
+  <div class="text-center">
+    <a href="https://forms.gle/k4DsiAwgjLKKb1n48">Form link</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Classifying Page{% endblock %}
+{% load static %}
+
+{% block add %}  
+    <link href="{% static 'to/c3.min.css' %}" rel="stylesheet">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="{% static 'to/c3.min.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+  <div class="text-center">
+      <p class="h4">Classify</p>
+  </div>
+
+  <div class="shadow p-3 m-3 bg-white rounded">
+      <label for="static-motion" class="font-weight-bolder">Motion</label>
+      <p class="px-2" id="static-motion">{{motion.motion_text}}</p>
+      <label for="static-info" class="font-weight-bolder">Info</label>
+      <p class="px-2" id="static-info">{{motion.info_text}}</p>
+      <br>
+      <form name="motion{{motion.id}}" class="p-1 m-1" action="" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="id" value="{{ motion.id }}">
+          <input type="hidden" name="which" value="theme">
+          <div class="form-group row">
+              <label for="ptheme" class="col-sm-2 col-form-label font-weight-bolder">Primary Theme</label>
+                  <div class ="col-sm-10">
+                  <select id="ptheme" name="p-theme" class="form-control" onchange="unSaved({{motion.id}},'ThemeAlert')">
+                      <option value="null"> </option>
+                      {% for theme in theme_list %}
+                      <option value='{{theme.id}}'{% if theme.theme_str == motion.theme_top %}
+                      selected = ""
+                      {% endif %}>{{theme.theme_str}}</option>
+                      {% endfor %}
+  　　		     </select>
+                  </div>
+          </div>
+          <div class="form-group row">
+              <label for="stheme" class="col-sm-2 col-form-label font-weight-bolder">Secondary Theme</label>
+                  <div class ="col-sm-10">
+                  <select id="stheme" name="s-theme" class="form-control" onchange="unSaved({{motion.id}},'ThemeAlert')">
+                      <option value="null"> </option>
+                      {% for theme in theme_list %}
+                      <option value='{{theme.id}}'{% if theme.theme_str == motion.theme_add %}
+                      selected = ""
+                      {% endif %}>{{theme.theme_str}}</option>
+                      {% endfor %}
+  　　		     </select>
+                  </div>
+          </div>
+          <div class="container d-flex justify-content-around">
+          <input type="submit" class="btn btn-dark" value="save theme"/>
+          </div>
+      </form>
+      <div id="ThemeAlert{{motion.id}}"></div>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}
+
+{% block script %}
+//<script>
+function unSaved(id,place){
+    var text = '<div class="alert alert-primary" role="alert">The change hasn\'t been saved yet</div>';
+    document.getElementById(place+id).innerHTML = text;
+}
+ //</script>
+{% endblock%}

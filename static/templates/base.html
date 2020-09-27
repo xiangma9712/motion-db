@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    {% load static %}
+    {% if GOOGLE_ANALYTICS_TRACKING_ID %}
+      {% include 'ga.html' %}
+    {% endif %}
+    {% block adsense %}{% endblock %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Powerful tool for parliamentary debate. Easy to access and copy motions">
+    <meta name="author" content="xiangma">
+    {% block meta %}{% endblock %}
+    <link rel="icon" href="{% static 'templates/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'templates/apple-touch-icon.png' %}">
+
+    <title>{% block title %}{% endblock %}</title>
+    <!-- BootstrapのCSS読み込み -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <!-- BootstrapのJS読み込み -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    {% block add %}{% endblock %}
+    {% ifequal DEBUG False %}
+    <script src="https://unpkg.com/quicklink@1.0.0/dist/quicklink.umd.js"></script>
+    <script>
+      quicklink();
+    </script>
+    {% endifequal %}
+  </head>
+  <header class="header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/">Motion DB</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item dropdown">
+           <a class="nav-link dropdown-toggle" href="/random/" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             Random
+           </a>
+           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+             <a class="dropdown-item" href="/random/?st=0">BP</a>
+             <a class="dropdown-item" href="/random/set/">Asian</a>
+             <a class="dropdown-item" href="/random/?st=2">NA</a>
+             <a class="dropdown-item" href="/random/">All</a>
+           </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search/">Search</a>
+          </li>
+          <li class="nav-item dropdown">
+           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             Ranking
+           </a>
+           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+             <a class="dropdown-item" href="/motions/ranking/?type=copy">Most copied</a>
+             <a class="dropdown-item" href="/motions/ranking/?type=fairness">Fairest</a>
+           </div>
+          </li> 
+          <li class="nav-item dropdown">
+           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             Contribute
+           </a>
+           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+             <a class="dropdown-item" href="/upload/">Upload</a>
+             <a class="dropdown-item" href="/accounts/evaluate/">Evaluate</a>
+             <a class="dropdown-item" href="/motions/theme/">Classify</a>
+           </div>
+          </li> 
+          <li class="nav-item">
+            {% if user.is_authenticated %}
+            <a class="nav-link" href="/accounts/logout/">Log out</a>
+            {% else %}
+            <a class="nav-link" href="/accounts/login/?next={{ request.get_full_path }}">Log in</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+  </button>
+
+    </nav>
+  </header>
+  <body class="body">
+    {% block body %}
+    {% endblock %}
+    {% block bodyend %}
+    {% endblock %}
+  </body>
+  <footer>
+    {% block footer%}{% endblock%}
+  </footer>
+  <script type="text/javascript">
+  function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  </script>
+  <script type="text/javascript">
+  {% block script %}
+  {% endblock %}
+  </script>
+  <style>
+  .header{
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    width: 100%;
+  }
+
+  .footer {
+    position: absolute;
+    background-color:#4F4F4F;
+    bottom: 0;
+  }
+
+  .fixed-button {
+    position: fixed;
+    background-color:rgba(255,255,255,0.5);
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    overflow: hidden;
+    backdrop-filter:blur(2px);
+  }
+  html {
+    position: relative;
+    min-height: 100%;
+  }
+
+  body {
+    padding-top: 70px;
+    padding-bottom: 140px;
+  }
+
+  {% block style %}
+  {% endblock %}
+  </style>
+</html>

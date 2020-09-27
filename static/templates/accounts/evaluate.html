@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Evaluation{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="MotionDB,fairness,evaluate">
+{% endblock %}
+
+{% block body %}
+<div class="text-center">
+     <p class="h4">Evaluation</p>
+</div>
+<div class="shadow p-3 m-3 bg-white rounded">
+  <p class="font-weight-bolder">{{target.tournament}},{{target.year}},{{target.round}}</p>
+  <p>{{target.motion_text}}</p>
+  <span class="text-muted">{{target.info_text}}</span>
+  <div class="container-fluid">
+    <div class="row">
+        {% if not target.theme_top == ""%}
+        <span class="badge badge-pill badge-info align-bottom">{{ target.theme_top }}</span>
+        {% if not target.theme_add == ""%}
+        <span class="badge badge-pill badge-info align-bottom">{{ target.theme_add }}</span>
+        {% endif %}
+        {% else %}
+        <span class="badge badge-pill badge-secondary align-bottom">No Theme</span>
+        {% endif %}
+    </div>
+    <form method="POST" action="">
+         {% csrf_token %}
+         <input type="hidden" name="motion-id" value={{target.id}}>
+         <fieldset class="form-group">
+           <div class="row justify-content-around">
+               <div class="col-sm-6 col-md-4 p-3">
+                   <div class="custom-control custom-radio">
+                       <input class="custom-control-input" type="radio" name="eval" id="select1" value=1 required>
+                       <label class="custom-control-label" for="select1">Easy for Gov</label>
+                   </div>
+                   <div class="custom-control custom-radio">
+                       <input class="custom-control-input" type="radio" name="eval" id="select2" value=0.5 required>
+                       <label class="custom-control-label" for="select2">Leaning toward Gov</label>
+                   </div>
+                   <div class="custom-control custom-radio">
+                       <input class="custom-control-input" type="radio" name="eval" id="select3" value=0 required>
+                       <label class="custom-control-label" for="select3">Fair</label>
+                   </div>
+                   <div class="custom-control custom-radio">
+                       <input class="custom-control-input" type="radio" name="eval" id="select4" value=-0.5 required>
+                       <label class="custom-control-label" for="select4">Leaning toward Opp</label>
+                   </div>
+                   <div class="custom-control custom-radio">
+                       <input class="custom-control-input" type="radio" name="eval" id="select5" value=-1 required>
+                       <label class="custom-control-label" for="select5">Easy for Opp</label>
+                   </div>
+               </div>
+           </div>
+       </fieldset>
+       <div class="row justify-content-center">
+           <button type ="submit" class="btn btn-dark">Submit</button>
+       </div>
+   </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}

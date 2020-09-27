@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="MotionDB,privacy,policy">
+{% endblock %}
+
+{% block body %}
+<div class="text-center">
+     <p class="h4">Privacy Policy</p>
+</div>
+<div class="shadow p-3 m-3 bg-white rounded">
+  <p>At Motion DB, we collect and manage user data according to the following Privacy Policy.</p>
+  <p class="font-weight-bolder">Data Collected</p>
+  <p>
+    We collect anonymous data from every visitor of the Website to monitor traffic and fix bugs. 
+    For example, we collect information like web requests, the data sent in response to such requests, 
+    the Internet Protocol address, the browser type, the browser language, and a timestamp for the request. 
+    (powered by Google Analytics)
+  </p>
+  <p>
+    Also, we collect anonymous data from users who copy motions; 
+    copied motion's id and timestamp would be recorded so as to make the ranking.
+  </p>
+  <p class="font-weight-bolder">Use and Sharing of Personal Data</p>
+  <p>We won't</p>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}

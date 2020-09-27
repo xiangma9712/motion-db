@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Upload{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="Motion,Debate,Upload">
+{% endblock %}
+
+{% block body %}
+<div class="text-center">
+     <p class="h4">Upload Page</p>
+     <span>-Writting-</span>
+</div>
+
+{% ifequal errorlog True %}
+<div class="alert alert-danger p-3 m-3" role="alert">Uploaded data was invalid :(<br>Please read alert message.</div>
+{% endifequal %}
+
+<form name="form1" action="" method="POST">
+    <div class="shadow p-3 m-3 bg-white rounded">
+    {% csrf_token %}
+    <input type="hidden" name="exist" value=0>
+    <input type="hidden" name="tournament" value="{{ tournament.tournament_name }}">
+    <h5>Tournament</h5>
+    <p>{{ tournament.tournament_name }}</p>
+    <h5>Year</h5>
+    <p>{{ year }}</p>
+    <input type="hidden" name="exist" value=0>
+    <div class="form-group">
+    <label for="round">Round</label>
+        <select id="round" name="round" class="form-control" onchange="metaCheck()">
+            <option value=null> </option>
+            {% for round in round_list %}
+            <option value='{{round.id}}'>{{round.round_str}}</option>
+            {% endfor %}
+　　		   </select>
+    </div>
+    <div id="areaForAlert"></div>
+    </div>
+    
+    <div class="shadow p-3 m-3 bg-white rounded">
+    <div class="form-group">
+      <label for="motion">Motion</label>
+      <textarea class="form-control" name="motion" id="motion" rows="4" onChange="errorCheck(value,'areaForAlert2')" required></textarea>
+    </div>
+
+    <div class="form-group row">
+        <label for="ptheme" class="col-sm-2 col-form-label">Primary Theme</label>
+            <div class ="col-sm-10">
+            <select id="ptheme" name="p-theme" class="form-control">
+                <option value="null"> </option>
+                {% for theme in theme_list %}
+                <option value='{{theme.id}}'>{{theme.theme_str}}</option>
+                {% endfor %}
+　　		     </select>
+            </div>
+    </div>
+    <div class="form-group row">
+        <label for="stheme" class="col-sm-2 col-form-label">Secondary Theme</label>
+            <div class ="col-sm-10">
+            <select id="stheme" name="s-theme" class="form-control">
+                <option value=0> </option>
+                {% for theme in theme_list %}
+                <option value='{{theme.id}}'>{{theme.theme_str}}</option>
+                {% endfor %}
+　　		     </select>
+            </div>
+    </div>
+    <div class="form-group">
+      <label for="info">Info</label>
+      <textarea class="form-control" name="info" id="info" rows="3"></textarea>
+    </div>
+    <div id="areaForAlert2"></div>
+    </div>
+    <div id="asian1" class=
+        {% ifequal tournament.style 1 %}"shadow p-3 m-3 bg-white rounded"
+        {% else %}"d-none"{% endifequal %}
+    >
+    <div class="form-group">
+      <label for="motion">Motion</label>
+      <textarea class="form-control" name="motion2" id="motion2" rows="4" onChange="errorCheck(value,'areaForAlert3')"></textarea>
+    </div>
+
+    <div class="form-group row">
+        <label for="ptheme" class="col-sm-2 col-form-label">Primary Theme</label>
+            <div class ="col-sm-10">
+            <select id="ptheme" name="p-theme2" class="form-control">
+                <option value="null"> </option>
+                {% for theme in theme_list %}
+                <option value='{{theme.id}}'>{{theme.theme_str}}</option>
+                {% endfor %}
+　　		     </select>
+            </div>
+    </div>
+    <div class="form-group row">
+        <label for="stheme" class="col-sm-2 col-form-label">Secondary Theme</label>
+            <div class ="col-sm-10">
+            <select id="stheme" name="s-theme2" class="form-control">
+                <option value=0> </option>
+                {% for theme in theme_list %}
+                <option value='{{theme.id}}'>{{theme.theme_str}}</option>
+                {% endfor %}
+　　		     </select>
+            </div>
+    </div>
+    <div class="form-group">
+      <label for="info">Info</label>
+      <textarea class="form-control" name="info2" id="info" rows="3"></textarea>
+    </div>
+    <div id="areaForAlert3"></div>
+    </div>
+    <div id="asian2" class="
+        {% ifequal tournament.style 1 %}shadow p-3 m-3 bg-white rounded
+        {% else %}d-none{% endifequal %}"
+    >
+    <div class="form-group">
+      <label for="motion">Motion</label>
+      <textarea class="form-control" name="motion3" id="motion3" rows="4" onChange="errorCheck(value,'areaForAlert4')"></textarea>
+    </div>
+
+    <div class="form-group row">
+        <label for="ptheme" class="col-sm-2 col-form-label">Primary Theme</label>
+            <div class ="col-sm-10">
+            <select id="ptheme" name="p-theme3" class="form-control">
+                <option value="null"> </option>
+                {% for theme in theme_list %}
+                <option value='{{theme.id}}'>{{theme.theme_str}}</option>
+                {% endfor %}
+　　		     </select>
+            </div>
+    </div>
+    <div class="form-group row">
+        <label for="stheme" class="col-sm-2 col-form-label">Secondary Theme</label>
+            <div class ="col-sm-10">
+            <select id="stheme" name="s-theme3" class="form-control">
+                <option value=0> </option>
+                {% for theme in theme_list %}
+                <option value='{{theme.id}}'>{{theme.theme_str}}</option>
+                {% endfor %}
+　　		     </select>
+            </div>
+    </div>
+    <div class="form-group">
+      <label for="info">Info</label>
+      <textarea class="form-control" name="info3" id="info" rows="3"></textarea>
+    </div>
+    <div id="areaForAlert4"></div>
+    </div>
+    <br>
+    <div class="container d-flex justify-content-around">
+    <input type="submit" class="btn btn-dark btn-lg" value="save"/>
+    </div>
+</form>
+
+ <section class="d-none">
+     <div id=meta>
+         [
+         {{meta_json}}
+         ]
+     </div>
+ </section>
+{% endblock %}
+
+{% block script %}
+//<script type="text/javascript">
+function errorCheck(value,id){
+    char = value.length;
+    words = value.split(' ').length;
+    metaCheck();
+    if((words <= 2)||(char < 12)){
+        var text = '<div class="alert alert-danger p-2" role="alert">motion is too short; you cannot save.</div>';
+        document.getElementById(id).innerHTML = text;
+    }
+    else if((value.indexOf("TH") == -1)&&(value.indexOf("his house") == -1)){
+        var text = '<div class="alert alert-warning p-2" role="alert">motion should include a phrase "TH / This house"</div>';
+        document.getElementById(id).innerHTML = text;
+    }
+    else{
+        document.getElementById(id).innerHTML = "";
+    }
+}
+</script>
+<script type="text/javascript">
+function metaCheck(){
+    var style = {{ tournament.style }};
+    var round_option = document.forms.form1.round;
+    var r_index = round_option.selectedIndex;
+    var round = round_option.options[r_index].text;
+
+    var meta = JSON.parse(document.getElementById("meta").innerHTML);
+    var hit = meta.filter(m => m[1]==round);
+    var text = ""
+    if(hit.length != 0){
+        var meta_id = hit[0][0];
+        var text_1 = '<div class="alert alert-warning p-2" role="alert">Motion DB has registry for the round!<br>';
+        var text_2 = ""
+        if(style == 2){
+            text_2 = '<a href="/motions/?set=' + meta_id + '">jump to motion page</a></div>';
+        }
+        else{
+            text_2 = '<a href="/motions/?id=' + meta_id + '">jump to motion page</a></div>';
+        }
+        text = text_1 + text_2;
+        document.forms.form1.exist.value = meta_id;
+    }
+    else{
+        var text = '<div class="alert alert-primary p-2" role="alert">It\'s new registry!</div>'
+        document.forms.form1.exist.value = 0;
+    }
+    document.getElementById("areaForAlert").innerHTML = text;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Upload{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="Motion,Debate,Upload">
+{% endblock %}
+
+{% block body %}
+<div class="text-center">
+     <p class="h4">Upload Page</p>
+     <span>-Scraping-</span>
+</div>
+
+{% ifequal errorlog True %}
+<div class="alert alert-danger p-3 m-3" role="alert">Failed to scrape :(<br>Can you check the link agian?</div>
+{% endifequal %}
+
+<form name="form1" action="" method="POST">
+    <div class="shadow p-3 m-3 bg-white rounded">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">
+            <p class="font-weight-bold">Tournament</p>
+        </div>
+        <div class="col">
+            <p>{{ tournament.tournament_name }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p class="font-weight-bold">Year</p>
+        </div>
+        <div class="col">
+            <p>{{ year }}</p>
+        </div>
+    </div>
+    <input type="hidden" name="tournament" value="{{ tournament.tournament_name }}">
+    {% ifequal is_asian True %}
+    <fieldset class="form-group">
+        <div class="row">
+            <legend class="col-form-label col-sm-2">Tab Type</legend>
+            <div class="col-sm-10">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input class="custom-control-input" type="radio" name="tab" id="select2" value=0>
+                <label class="custom-control-label" for="select2">TabbyCat</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input class="custom-control-input" type="radio" name="tab" id="select3" value=1>
+                <label class="custom-control-label" for="select3">Tabbr</label>
+            </div>
+            </div>
+        </div>
+    </fieldset>
+    {% else %}
+    <p>For BP and NA tournaments, TabbyCat is only available.</p>
+    {% endifequal%}
+    <div class="form-group">
+        <div class="form-group">
+          <label for="url">Tab URL</label>
+          <textarea class="form-control" name="url" id="url" rows="1" required></textarea>
+        </div>
+    </div>
+    <span>※Scraping usually takes 5-10 seconds.</span>
+    </div>
+    <br>
+    <div class="container d-flex justify-content-around">
+    <input type="submit" class="btn btn-dark btn-lg" value="scrape"/>
+    </div>
+</form>
+{% endblock %}

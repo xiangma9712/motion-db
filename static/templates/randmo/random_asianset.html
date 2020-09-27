@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Random Motions{% endblock %}
+{% load static %}
+{% block meta %}
+  <meta name="keywords" content="Motion,Debate,Random,Asian">
+{% endblock %}
+{% block body %}
+    <div class="text-center">
+        <p class="h4">Random Motions</p>
+        <span>-Asian style-</span>
+    </div>
+
+    <div id=outArea>
+        <div class="shadow p-3 m-3 bg-white rounded">Tap load button to start</div>
+    </div>
+    {% for set in set_list %}
+        <div id="area-{{set.id}}" class="d-none">
+            <div class="shadow p-3 m-3 bg-white rounded">
+                <div id="{{set.id}}" onclick ="copy('{{ set.id }}')">
+                    <p class="font-weight-bolder">{{set.tournament}},{{set.year}},{{set.round}}</p>
+                    <p>{{set.one.motion_text}}<br>
+                    <span class="text-muted">{{set.one.info_text}}</span></p>
+                    <p>{{set.two.motion_text}}<br>
+                    <span class="text-muted">{{set.two.info_text}}</span></p>
+                    <p>{{set.three.motion_text}}<br>
+                    <span class="text-muted">{{set.three.info_text}}</span></p>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-9 px-0">
+                            <span id="theme_{{set.id}}" class="badge badge-pill badge-info align-bottom">{{ set.theme }}</span>
+                            <span id="notheme_{{set.id}}" class="badge badge-pill badge-secondary align-bottom">No Theme</span>
+                        </div>
+                        <div class="col-3 text-right px-0">
+                            <a href="/motions/set/?id={{set.id}}">edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <section class="d-none">
+        <div id=meta>
+            [{{id_list}}]
+        </div>
+        <div id=displayed>
+            []
+        </div>
+    </section>
+
+    <div class="fixed-button">
+        <div class="container d-flex justify-content-around pt-2">
+            <button type="button" class="btn btn-dark" onClick="random()">load</button>
+        </div>
+    </div>
+{% endblock%}
+
+{% block script %}
+//<script type="text/javascript">
+function copy(meta_id) {
+    var motion = document.getElementById(meta_id).innerText;
+    var copyFrom = document.createElement("textarea");
+    copyFrom.textContent = motion;
+
+    // bodyタグの要素を取得
+    var bodyElm = document.getElementsByTagName("body")[0];
+    // 子要素にテキストエリアを配置
+    bodyElm.appendChild(copyFrom);
+
+    // テキストエリアの値を選択
+    copyFrom.select();
+    var succeeded = document.execCommand('copy');
+    if (succeeded) {
+      alert('Motion is copied!');
+    } else {
+      alert('Copy failed');
+    }
+    bodyElm.removeChild(copyFrom);
+    
+    //motion idの取得と保存
+    var id_api = "" + location.protocol + "//" + location.host + "/api/set/"+ meta_id +"/"
+    $.getJSON(id_api,function(data){
+            console.log(data);
+            copyAPI(data["one_id"]);
+            copyAPI(data["two_id"]);
+            copyAPI(data["three_id"]);
+        },)
+        .fail(function(){
+            console.log("FAIL");
+            return [];
+        });
+}
+function copyAPI(id){
+    var info = {
+        motion_id : id,
+        csrfmiddlewaretoken: getCookie("csrftoken"),
+    };
+    var url = "" + location.protocol + "//" + location.host + "/api/copy/"
+    if(id != null){
+        $.post(url,info);
+    }
+}
+</script>
+<script type="text/javascript">
+function random(){
+    if(!document.getElementById("outArea").classList.contains("d-none")){
+        document.getElementById("outArea").classList.add("d-none");
+    }
+    var displayed = document.getElementById("displayed").innerHTML;
+    if(displayed != "[]"){
+        var display_list = JSON.parse(displayed);
+        for(l=0; l<display_list.length; l++){
+            var change = "area-" + display_list[l];
+            document.getElementById(change).classList.add("d-none")
+        }
+    }
+    var id_list = JSON.parse(document.getElementById("meta").innerHTML);
+    var lim = id_list.length;
+    var target_id = id_list[Math.floor(Math.random()*lim)];
+    displayed = [target_id];
+    var themeTarget = "theme_" + target_id;
+    if(document.getElementById(themeTarget).innerHTML ==""){
+        document.getElementById(themeTarget).classList.add("d-none");
+    }
+    else{
+        document.getElementById("notheme_"+target_id).classList.add("d-none");
+    }
+
+    var target = "area-" + target_id;
+    document.getElementById(target).classList.remove("d-none");
+    document.getElementById("displayed").innerHTML = JSON.stringify(displayed);
+}
+</script>
+{% endblock %}
+{% block style %}
+body {
+    padding-bottom:50px;
+}
+{% endblock %}
